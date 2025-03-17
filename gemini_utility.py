@@ -17,19 +17,19 @@ GOOGLE_API_KEY = config_data["GOOGLE_API_KEY"]
 genai.configure(api_key=GOOGLE_API_KEY)
 
 def load_gemini_pro_model():
-    gemini_pro_model = genai.GenerativeModel("models/gemini-1.0-pro")  # Updated model name
+    gemini_pro_model = genai.GenerativeModel("models/gemini-1.5-pro")  # Updated to a likely current model
     return gemini_pro_model
 
 # Get response from Gemini-Pro-Vision model - image/text to text
 def gemini_pro_vision_response(prompt, image):
-    gemini_pro_vision_model = genai.GenerativeModel("models/gemini-1.0-pro-vision")  # Updated model name
+    gemini_pro_vision_model = genai.GenerativeModel("models/gemini-1.5-pro")  # Updated to a likely current vision-capable model
     response = gemini_pro_vision_model.generate_content([prompt, image])
     result = response.text
     return result
 
 # Get response from embeddings model - text to embeddings
 def embeddings_model_response(input_text):
-    embedding_model = "models/embedding-001"  # This is likely correct
+    embedding_model = "models/embedding-001"  # This is typically correct
     embedding = genai.embed_content(model=embedding_model,
                                     content=input_text,
                                     task_type="retrieval_document")
@@ -38,7 +38,7 @@ def embeddings_model_response(input_text):
 
 # Get response from Gemini-Pro model - text to text
 def gemini_pro_response(user_prompt):
-    gemini_pro_model = genai.GenerativeModel("models/gemini-1.0-pro")  # Updated model name
+    gemini_pro_model = genai.GenerativeModel("models/gemini-1.5-pro")  # Updated to a likely current model
     response = gemini_pro_model.generate_content(user_prompt)
     result = response.text
     return result
