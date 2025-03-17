@@ -3,14 +3,19 @@ from PIL import Image
 import streamlit as st
 from streamlit_option_menu import option_menu
 from dotenv import load_dotenv
-import google.generativeai as genai
+from gemini_utility import (
+    load_gemini_pro_model,
+    gemini_pro_response,
+    gemini_pro_vision_response,
+    embeddings_model_response
+)
 
+# Load environment variables (API key already configured in gemini_utility)
 load_dotenv()
 api_key = os.getenv("GOOGLE_API_KEY")
 if not api_key:
     st.error("GOOGLE_API_KEY not found. Please set it in your .env file or Streamlit Cloud secrets.")
     st.stop()
-genai.configure(api_key=api_key)
 
 working_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -33,7 +38,12 @@ def translate_role_for_streamlit(user_role):
         return user_role
 
 if selected == 'ChatBot':
-    model = genai.GenerativeModel("gemini-1.0-pro")  # Updated model name
+    try:
+        model = load_gemini_pro_model()  # Uses "models/gemini-1.5-pro"
+    except Exception as e:
+        st.error(f"Failed to load Gemini model: {str(e)}")
+        st.stop()
+
     if "chat_session" not in st.session_state:
         st.session_state.chat_session = model.start_chat(history=[])
 
@@ -63,8 +73,7 @@ if selected == "Image Captioning":
             st.image(resized_img)
         default_prompt = "Write a short caption for this image"
         try:
-            model = genai.GenerativeModel("gemini-1.0-pro-vision")  # Updated vision model
-            caption = model.generate_content([default_prompt, image]).text
+            caption = gemini_pro_vision_response(default_prompt, image)  # Uses "models/gemini-1.5-pro"
             with col2:
                 st.info(caption)
         except Exception as e:
@@ -75,7 +84,7 @@ if selected == "Embed text":
     user_prompt = st.text_area(label='', placeholder="Enter the text to get embeddings")
     if st.button("Get Response") and user_prompt:
         try:
-            response = genai.embed_content(model="embedding-001", content=user_prompt)
+            response = embeddings_model_response(user_prompt)
             st.markdown(str(response))
         except Exception as e:
             st.error(f"Error generating embeddings: {str(e)}")
@@ -85,8 +94,7 @@ if selected == "Ask me anything":
     user_prompt = st.text_area(label='', placeholder="Ask me anything...")
     if st.button("Get Response") and user_prompt:
         try:
-            model = genai.GenerativeModel("gemini-1.0-pro")  # Updated model name
-            response = model.generate_content(user_prompt).text
+            response = gemini_pro_response(user_prompt)  # Uses "models/gemini-1.5-pro"
             st.markdown(response)
         except Exception as e:
             st.error(f"Error getting response: {str(e)}")
