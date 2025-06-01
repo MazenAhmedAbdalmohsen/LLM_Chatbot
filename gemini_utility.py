@@ -13,12 +13,12 @@ if not GOOGLE_API_KEY:
 genai.configure(api_key=GOOGLE_API_KEY)
 
 def load_gemini_pro_model():
-    gemini_pro_model = genai.GenerativeModel("models/gemini-1.5-pro")  # Updated to a likely current model
+    gemini_pro_model = genai.GenerativeModel("models/gemini-1.5-flash")  # Updated to a likely current model
     return gemini_pro_model
 
 # Get response from Gemini-Pro-Vision model - image/text to text
 def gemini_pro_vision_response(prompt, image):
-    gemini_pro_vision_model = genai.GenerativeModel("models/gemini-1.5-pro")  # Assuming multimodal support
+    gemini_pro_vision_model = genai.GenerativeModel("models/gemini-1.5-flash")  # Assuming multimodal support
     response = gemini_pro_vision_model.generate_content([prompt, image])
     result = response.text
     return result
@@ -34,7 +34,7 @@ def embeddings_model_response(input_text):
 
 # Get response from Gemini-Pro model - text to text
 def gemini_pro_response(user_prompt):
-    gemini_pro_model = genai.GenerativeModel("models/gemini-1.5-pro")  # Updated to a likely current model
+    gemini_pro_model = genai.GenerativeModel("models/gemini-1.5-flash")  # Updated to a likely current model
     response = gemini_pro_model.generate_content(user_prompt)
     result = response.text
     return result
